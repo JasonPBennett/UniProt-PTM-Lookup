@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uniprot-ptm-lookup"
+version = "0.1.0"
+description = "Annotate inline peptide PTMs using the UniProt PTM vocabulary"
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["proteomics", "ptm", "uniprot", "peptide", "mass spectrometry"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/docs/ptmlist"
+Documentation = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/docs/ptmlist"
+
+[project.scripts]
+uniprot-ptm-lookup = "uniprot_ptm_lookup.core:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+uniprot_ptm_lookup = ["uniprot_ptm_entries_2026_01.json"]
