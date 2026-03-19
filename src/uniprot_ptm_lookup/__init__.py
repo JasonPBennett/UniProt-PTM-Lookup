@@ -46,4 +46,4 @@ __all__ = [
     "parse_modified_peptide_string",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"

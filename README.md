@@ -110,3 +110,8 @@ python -m pip install -e .
 - The `+114.0429` ubiquitination / digly remnant mapping is implemented as a curated fallback alias, because this shorthand is commonly used in peptide search outputs but is not exposed as a direct site entry in the UniProt PTM list.
 - For strict UniProt-only behavior, pass `allow_fallback_aliases=False` when annotating modified peptides.
 - The bundled PTM JSON library is based on UniProt release `2026_01`.
+
+
+Compatibility
+-------------
+- Python 3.7+

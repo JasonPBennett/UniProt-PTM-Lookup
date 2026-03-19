@@ -45,7 +45,7 @@ import importlib.resources as importlib_resources
 from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import DefaultDict, Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import DefaultDict, Dict, FrozenSet, Iterable, List, Optional, Sequence, Tuple, Union
 from urllib.request import urlopen
 
 DEFAULT_PTM_URL = (
@@ -130,7 +130,7 @@ DEFAULT_MODIFIED_PEPTIDE_TOLERANCE = 0.05
 DEFAULT_FALLBACK_MASS_ALIASES: Tuple["MassAlias", ...] = ()
 
 
-@dataclass(slots=True)
+@dataclass
 class PTMEntry:
     accession: str
     name: str
@@ -198,7 +198,7 @@ class PTMEntry:
         }
 
 
-@dataclass(slots=True)
+@dataclass
 class PTMHit:
     entry: PTMEntry
     matched_target: Tuple[str, ...]
@@ -214,7 +214,7 @@ class PTMHit:
         }
 
 
-@dataclass(slots=True)
+@dataclass
 class SiteObservation:
     position: int  # 1-based peptide position
     delta_mass: float
@@ -222,7 +222,7 @@ class SiteObservation:
     amino_acid_position: Optional[str] = None
 
 
-@dataclass(slots=True)
+@dataclass
 class SiteAnnotation:
     position: int
     residue: str
@@ -238,7 +238,7 @@ class SiteAnnotation:
         }
 
 
-@dataclass(slots=True)
+@dataclass
 class ModifiedPeptideParseResult:
     raw_sequence: str
     sequence: str
@@ -260,7 +260,7 @@ class ModifiedPeptideParseResult:
         }
 
 
-@dataclass(slots=True)
+@dataclass
 class MassAlias:
     name: str
     modification_type: str
@@ -281,7 +281,7 @@ class MassAlias:
         return False
 
 
-@dataclass(slots=True)
+@dataclass
 class PTMCandidate:
     display_name: str
     modification_type: Optional[str]
@@ -307,7 +307,7 @@ class PTMCandidate:
         }
 
 
-@dataclass(slots=True)
+@dataclass
 class ModifiedSiteResult:
     position: int
     residue: str
@@ -344,7 +344,7 @@ class ModifiedSiteResult:
         }
 
 
-@dataclass(slots=True)
+@dataclass
 class ModifiedPeptideResult:
     raw_sequence: str
     sequence: str
@@ -358,7 +358,7 @@ class ModifiedPeptideResult:
         }
 
 
-@dataclass(slots=True)
+@dataclass
 class _MassIndex:
     masses: Tuple[float, ...]
     targets: Tuple[Tuple[str, ...], ...]
@@ -797,12 +797,12 @@ class UniProtPTMLookup:
         )
 
     @classmethod
-    def from_path(cls, path: str | Path, *, source_url: Optional[str] = None) -> "UniProtPTMLookup":
+    def from_path(cls, path: Union[str, Path], *, source_url: Optional[str] = None) -> "UniProtPTMLookup":
         text = Path(path).read_text(encoding="utf-8")
         return cls.from_text(text, source_url=source_url)
 
     @classmethod
-    def from_json_export(cls, path: str | Path) -> "UniProtPTMLookup":
+    def from_json_export(cls, path: Union[str, Path]) -> "UniProtPTMLookup":
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
         entries = [PTMEntry.from_dict(entry) for entry in payload["entries"]]
         return cls(
@@ -813,8 +813,16 @@ class UniProtPTMLookup:
 
     @classmethod
     def from_packaged_library(cls) -> "UniProtPTMLookup":
-        package_root = importlib_resources.files("uniprot_ptm_lookup")
-        payload = json.loads(package_root.joinpath(PACKAGED_LIBRARY_FILENAME).read_text(encoding="utf-8"))
+        if hasattr(importlib_resources, "files"):
+            package_root = importlib_resources.files("uniprot_ptm_lookup")
+            payload_text = package_root.joinpath(PACKAGED_LIBRARY_FILENAME).read_text(encoding="utf-8")
+        else:
+            payload_text = importlib_resources.read_text(
+                "uniprot_ptm_lookup",
+                PACKAGED_LIBRARY_FILENAME,
+                encoding="utf-8",
+            )
+        payload = json.loads(payload_text)
         entries = [PTMEntry.from_dict(entry) for entry in payload["entries"]]
         return cls(
             entries,
@@ -827,7 +835,7 @@ class UniProtPTMLookup:
         cls,
         *,
         url: str = DEFAULT_PTM_URL,
-        cache_path: Optional[str | Path] = None,
+        cache_path: Optional[Union[str, Path]] = None,
         refresh: bool = False,
         timeout: int = 60,
     ) -> "UniProtPTMLookup":
@@ -1085,7 +1093,7 @@ class UniProtPTMLookup:
             for modified_sequence in modified_sequences
         ]
 
-    def export_entries_json(self, path: str | Path) -> None:
+    def export_entries_json(self, path: Union[str, Path]) -> None:
         payload = {
             "release": self.release,
             "source_url": self.source_url,
@@ -1157,7 +1165,7 @@ class UniProtPTMLookup:
     def export_modified_peptide_results_csv(
         cls,
         results: Sequence[ModifiedPeptideResult],
-        path: str | Path,
+        path: Union[str, Path],
         *,
         include_all_candidates: bool = True,
         candidate_separator: str = " | ",
@@ -1202,7 +1210,7 @@ class UniProtPTMLookup:
     def annotate_modified_peptides_to_csv(
         self,
         modified_sequences: Sequence[str],
-        path: str | Path,
+        path: Union[str, Path],
         *,
         tolerance: float = DEFAULT_MODIFIED_PEPTIDE_TOLERANCE,
         feature_keys: Optional[Iterable[str]] = None,
@@ -1234,7 +1242,7 @@ class UniProtPTMLookup:
     def _site_hit_matches(
         hit: PTMHit,
         *,
-        allowed_feature_keys: frozenset[str],
+        allowed_feature_keys: FrozenSet[str],
         polypeptide_position: Optional[str],
         amino_acid_position: Optional[str],
     ) -> bool:
