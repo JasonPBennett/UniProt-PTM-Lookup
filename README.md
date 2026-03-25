@@ -1,6 +1,6 @@
 # uniprot-ptm-lookup
 
-A small reusable Python package for annotating in-line peptide modifications against the UniProt PTM vocabulary.
+A Python package for annotating inline peptide modifications against the UniProt PTM vocabulary.
 
 It supports modified peptide strings such as:
 
@@ -9,20 +9,26 @@ It supports modified peptide strings such as:
 - `AAAAVRQM(+15.99)NPHIRVT`
 - `M(+15.99)PEPTIDEK(+114.04)`
 
-The package ships with a bundled JSON export of the UniProt PTM list so it can be used immediately after installation, and it can also download the current UniProt flatfile when needed.
+The package ships with a bundled JSON export of the UniProt PTM list so it can be used immediately after installation. It can also download the current UniProt flatfile when needed.
 
-## Install
+## Installation
 
-Editable install while developing locally:
+Install from a published release asset:
 
 ```bash
-python -m pip install -e .
+python -m pip install "uniprot-ptm-lookup @ https://github.com/JasonPBennett/UniProt-PTM-Lookup/releases/download/v0.1.3/uniprot_ptm_lookup-0.1.3-py3-none-any.whl"
 ```
 
-Regular install into an environment:
+Install from a local checkout:
 
 ```bash
 python -m pip install .
+```
+
+Install in editable mode while developing locally:
+
+```bash
+python -m pip install -e .
 ```
 
 ## Quick start
@@ -69,7 +75,7 @@ results = lib.annotate_modified_peptides_to_csv(
 )
 ```
 
-## Command line usage
+## CLI usage
 
 Use the bundled PTM library that ships with the package:
 
@@ -89,18 +95,32 @@ uniprot-ptm-lookup \
   --export-modified-csv annotated_ptms.csv
 ```
 
-## Installing from Git in other projects
+## Using in other projects
 
-Once this directory is committed to a Git repository, another project can install it directly:
+Published release artifacts are attached to GitHub Releases. To pin this package in another project, add the release wheel URL to `requirements.txt`:
 
-```bash
-python -m pip install "git+https://YOUR_GIT_SERVER/YOUR_ORG/uniprot-ptm-lookup.git"
+```text
+uniprot-ptm-lookup @ https://github.com/JasonPBennett/UniProt-PTM-Lookup/releases/download/v0.1.3/uniprot_ptm_lookup-0.1.3-py3-none-any.whl
 ```
 
-For an editable Git checkout during development:
+## Developer checkout from GitLab
+
+For institutional development, clone the project from your GitLab namespace and install it in editable mode.
+
+In GitLab, open the repository, select **Code**, copy either the HTTPS or SSH clone URL, and substitute it into the commands below.
+
+HTTPS:
 
 ```bash
-git clone https://YOUR_GIT_SERVER/YOUR_ORG/uniprot-ptm-lookup.git
+git clone https://<gitlab-host>/<group>/uniprot-ptm-lookup.git
+cd uniprot-ptm-lookup
+python -m pip install -e .
+```
+
+SSH:
+
+```bash
+git clone git@<gitlab-host>:<group>/uniprot-ptm-lookup.git
 cd uniprot-ptm-lookup
 python -m pip install -e .
 ```
@@ -111,7 +131,6 @@ python -m pip install -e .
 - For strict UniProt-only behavior, pass `allow_fallback_aliases=False` when annotating modified peptides.
 - The bundled PTM JSON library is based on UniProt release `2026_01`.
 
+## Compatibility
 
-Compatibility
--------------
 - Python 3.7+
