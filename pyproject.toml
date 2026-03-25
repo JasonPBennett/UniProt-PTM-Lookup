@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61", "wheel"]
+requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "uniprot-ptm-lookup"
-version = "0.1.1"
+version = "0.1.3"
 description = "Annotate inline peptide PTMs using the UniProt PTM vocabulary"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -25,18 +25,20 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/docs/ptmlist"
-Documentation = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/docs/ptmlist"
+Homepage = "https://github.com/JasonPBennett/uniprot-ptm-lookup"
+"Source Code" = "https://github.com/JasonPBennett/uniprot-ptm-lookup"
+Issues = "https://github.com/JasonPBennett/uniprot-ptm-lookup/issues"
+Releases = "https://github.com/JasonPBennett/uniprot-ptm-lookup/releases"
+"Upstream PTM Vocabulary" = "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/docs/ptmlist"
 
 [project.scripts]
 uniprot-ptm-lookup = "uniprot_ptm_lookup.core:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-uniprot_ptm_lookup = ["uniprot_ptm_entries_2026_01.json"]
+uniprot_ptm_lookup = ["uniprot_ptm_entries_*.json"]
